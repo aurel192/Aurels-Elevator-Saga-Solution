@@ -11,7 +11,7 @@
         var DnButtonsPressed = [];               
 
         var updateIndicators = function (enabled, dir, e) {
-            for (var i = 0 ; i<=NumberOfElevators && enabled ; i++) {
+            for (var i = 0 ; i<NumberOfElevators && enabled ; i++) {
                 if (elevators[i].destinationDirection() == "up") {
                     elevators[i].goingUpIndicator(true);
                     elevators[i].goingDownIndicator(false);
@@ -204,7 +204,7 @@
             checkWaitingFloors(floor, UpOrDownBtn, "ShowLog");
             var Dist = 99;
             var NearestElevator = -1;
-            for (var i = 0 ; i <= 3 ; i++) {                
+            for (var i = 0 ; i < NumberOfElevators ; i++) {                
                 if ( Dist > Math.abs(elevators[i].currentFloor() - floor) && Math.abs(elevators[i].currentFloor() - floor)>0) {
                     Dist = Math.abs(elevators[i].currentFloor() - floor);
                     NearestElevator = i;
