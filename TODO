@@ -1,0 +1,7 @@
+
+- eventeknél _.each helyett for, és paraméterként átadni sorszámot
+
+- counter++; tömbben letárolni minden fontos infót.
+  honnan hova hányan mennek
+  hányan szálnak be a liftbe, ha sokan akkor őket először ki kell rakni hogy legyen hely
+  
