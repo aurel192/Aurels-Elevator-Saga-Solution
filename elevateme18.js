@@ -11,7 +11,7 @@
         var DnButtonsPressed = [];               
 
         var updateIndicators = function (enabled, dir, e) {
-            for (var i = 0 ; i<=3 && enabled ; i++) {
+            for (var i = 0 ; i<=NumberOfElevators && enabled ; i++) {
                 if (elevators[i].destinationDirection() == "up") {
                     elevators[i].goingUpIndicator(true);
                     elevators[i].goingDownIndicator(false);
@@ -288,23 +288,6 @@
             elevators[1].stop();
             elevators[2].stop();
         }
-        
-        // Transported 3439
-        // Elapsed time 2317s
-        // Transported/s 1.48
-        // Avg waiting time 17.3s
-        // Max waiting time 132.0s
-        // Moves 27609
-            // for (var i = 0 ; i <= 3 ; i++) {
-                // if (elevators[i].loadFactor() > 0.8 ) {
-                    // console.log("TELE VAN A LIFT!!!!!!!!!!!!!!!! " + i + "  "+elevators[i].loadFactor());
-                    // for ( var j=11 ; j>=0 ; j--) {
-                        // elevators[i].goToFloor(j,true);
-                        // elevators[i].goingUpIndicator(false);
-                        // elevators[i].goingDownIndicator(false);
-                    // }
-                // }
-            // }            
     }
 }
 
