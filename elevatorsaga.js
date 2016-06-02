@@ -24,7 +24,8 @@
 		    }
 		    return arr;
 		}
-		var passingersInElevators = Array2D(arraySize,NumberOfElevators,0); //[counter][NumberOfElevators] = PassengersInElevator		
+		var passingersInElevators = Array2D(arraySize,NumberOfElevators,0);
+        //[counter][NumberOfElevators] = PassengersInElevator		
 
 
         var updateIndicators = function (enabled, dir, e) {
