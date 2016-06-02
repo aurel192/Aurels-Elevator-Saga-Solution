@@ -1,6 +1,8 @@
-- Legrégebben várakozó lifteket hibásan jelzi ki. Solved. 
+- Legrégebben várakozó emeletnél a legújabbat írja ki. Solved, de gyakran nem nullázódik, és ha nullázódik is visszakerül a régi érték
 
-- eventeknél _.each helyett for, és paraméterként átadni sorszámot
+- NumberOfElevators, NumberOfFloors  DONE
+
+- eventeknél _.each helyett for, és paraméterként átadni sorszámot.  DONE.
 
 - counter++; tömbben letárolni minden fontos infót.
   honnan hova hányan mennek
