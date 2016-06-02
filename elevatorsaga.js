@@ -26,7 +26,6 @@
 		}
 		var passingersInElevators = Array2D(arraySize,NumberOfElevators,0); //[counter][NumberOfElevators] = PassengersInElevator		
 
-
         var updateIndicators = function (enabled, dir, e) {
             for (var i = 0 ; i<NumberOfElevators && enabled ; i++) {
                 if (elevators[i].destinationDirection() == "up") {
@@ -62,16 +61,29 @@
             }
         }
 
-        var listPassangersInElevator = function(logparam) {
-        	for (var e = 0 ; e < NumberOfElevators ; e++) {
-        		if (logparam=="ShowLog")
+        var listPassangersInElevator = function(elevatorNumber, logparam) {
+            for (var e = 0 ; logparam == "ShowEverything" && e < NumberOfElevators ; e++) {
         			console.log("listPassangersInElevator " + e);
 	       		for (var c = (counter)-20 ; (counter) > 25 && c <= (counter) ; c++ ) {       			
-	        		if (passingersInElevators[c][e]>0)
-	        			if (logparam=="ShowLog")
-							console.log("PassengersInElevator[" + c + "][" + e + "]=" + passingersInElevators[c][e] );
+	        		if (passingersInElevators[c][e]>0) {                        
+                        console.log("PassengersInElevator[" + c + "][" + e + "]=" + passingersInElevators[c][e].toFixed(2) );  
+                    }                    
 	        	}
         	}
+            var prevLoad = 0;
+            var currLoad = 0;
+            for (var c = counter ; c>0 ; c-- ) {                      
+                if(prevLoad!=0 && passingersInElevators[c][elevatorNumber]>0){
+                    currLoad = passingersInElevators[c][elevatorNumber];
+                    break;
+                }
+                if (prevLoad==0 && passingersInElevators[c][elevatorNumber]>0) {
+                    prevLoad = passingersInElevators[c][elevatorNumber];                
+                }
+            }
+            if (logparam=="ShowLog")
+                console.log("Elevator " + elevatorNumber + " getIn/getOff " + (currLoad-prevLoad).toFixed(2) + "  prevLoad:" + prevLoad.toFixed(2) + " currLoad:" + currLoad.toFixed(2));
+            return currLoad-prevLoad;
         }
   
         var removeDuplicates = function (originalArray, sort) {
@@ -208,9 +220,13 @@
                     break;
                 default:   // "FirstComeFirstServe":  Oda megy ahova küldik
                     elevator.goToFloor(FloorBtnPressed);
-            } 
-            if (logparam == "ShowLog")
+            }
+            passingersInElevators[counter][elevatorNumber] = elevator.loadFactor();
+            if (counter++ > arraySize-50)
+                counter=0;            
+            if (logparam == "ShowLog") 
                 console.log("FloorButtonPressed(" + behavior + "," + FloorBtnPressed + ")  Queue: " + elevator.destinationQueue + " Elevator " + elevatorNumber + " is at floor " + elevator.currentFloor());                      
+            listPassangersInElevator(elevatorNumber, "ShowLog");
         }
         
         var passingFloorBehavior  = function (elevator, elevatorNumber, passFloorNum, direction, logparam) { 
@@ -229,10 +245,11 @@
             waitingFloorsUp[Floor] = -1;  // Később majd csak akkor kell nullázni, ha arra ment a lift, és elis vitte a várakozókat
             waitingFloorsDn[Floor] = -1;
             passingersInElevators[counter][elevatorNumber] = elevator.loadFactor();
-			counter++;
-            listPassangersInElevator("ShowLog");
+            if (counter++ > arraySize-50)
+			    counter=0;
             if (logparam == "ShowLog")
                 console.log("Elevator " + elevatorNumber + " stopped at floor " + Floor + "\tloadFactor:" + elevator.loadFactor());
+            listPassangersInElevator(elevatorNumber, "ShowLog");
         }
 
         var ButtonPressedOnFloor  = function (floor, UpOrDownBtn, maxLoad, sendImmediately, logparam) {     
@@ -319,7 +336,7 @@
         }
         timer = timer + dt;            
         var UseAllElevators = true;
-        for (var i = 0 ; !UseAllElevators && i<NumberOfElevators-1 ; i++) 
+        for (var i = 0 ; !UseAllElevators && i<elevators.length-1 ; i++) 
             elevators[i].stop();
     }
 }
