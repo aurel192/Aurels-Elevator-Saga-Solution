@@ -1,3 +1,4 @@
+
 {
     init: function(elevators, floors) {
         timer = 0;
@@ -88,7 +89,8 @@
             if (logparam=="ShowLog" || logparam=="ShowEverything")
                 console.log("Elevator " + elevatorNumber + " getIn/getOff " + (currLoad-prevLoad).toFixed(2) + "  prevLoad:" + prevLoad.toFixed(2) + " currLoad:" + currLoad.toFixed(2) + " " + msg);
             // Az utolsó 5-20 értékből a legkisebbet vagy a legnagyobbat kell kiválasztani, mert egyszerre sokan nyomják meg a gombot.
-            //  return currLoad-prevLoad;
+            // de azt a hívó függvénynek kell kiválogatni az utolsó értékekböl, annyiból ahány emelet van.   return currLoad-prevLoad;
+            //console.log("avgWaitTime:" + avgWaitTime + "  maxWaitTime:" + maxWaitTime + " moveCount:" + moveCount + " transportedCounter:" + transportedCounter);
         }
   
         var removeDuplicates = function (originalArray, sort) {
@@ -254,7 +256,7 @@
 			    counter=0;
             if (logparam == "ShowLog")
                 console.log("Elevator " + elevatorNumber + " stopped at floor " + Floor + "\tloadFactor:" + elevator.loadFactor().toFixed(2));
-            listPassangersInElevator(elevatorNumber, "Elevator Stopped", "ShowLog");
+            listPassangersInElevator(elevatorNumber, "Elevator Stopped", "ShowLog");           
         }
 
         var ButtonPressedOnFloor  = function (floor, UpOrDownBtn, maxLoad, sendImmediately, logparam) {     
