@@ -1,3 +1,4 @@
+- Legrégebben várakozó lifteket hibásan jelzi ki. Solved. 
 
 - eventeknél _.each helyett for, és paraméterként átadni sorszámot
 
