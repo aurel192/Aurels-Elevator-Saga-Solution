@@ -13,19 +13,19 @@
         var UpButtonsPressed = [];
         var DnButtonsPressed = [];        
 
-		var Array2D = function(numrows, numcols, initial){
-		   var arr = [];
-		   for (var i = 0; i < numrows; ++i){
-		      var columns = [];
-		      for (var j = 0; j < numcols; ++j){
-		         columns[j] = initial;
-		      }
-		      arr[i] = columns;
-		    }
-		    return arr;
-		}
-		var passingersInElevators = Array2D(arraySize,NumberOfElevators,0); //[counter][NumberOfElevators] = PassengersInElevator		
-
+        var Array2D = function(numrows, numcols, initial){
+           var arr = [];
+           for (var i = 0; i < numrows; ++i){
+              var columns = [];
+              for (var j = 0; j < numcols; ++j){
+                 columns[j] = initial;
+              }
+              arr[i] = columns;
+            }
+            return arr;
+        }
+        var passingersWeightInElevators = Array2D(arraySize,NumberOfElevators,0); // [counter][NumberOfElevators] = PassengersInElevator       
+        var waitingInsideElevators = Array2D(NumberOfElevators,NumberOfFloors,-1); // waitingInsideElevators[2][11] == 20;  A harmadik liftben 11. emeletre 20mp-e várnak
 
         var updateIndicators = function (enabled, dir, e) {
             for (var i = 0 ; i<NumberOfElevators && enabled ; i++) {
@@ -62,16 +62,35 @@
             }
         }
 
-        var listPassangersInElevator = function(logparam) {
-        	for (var e = 0 ; e < NumberOfElevators ; e++) {
-        		if (logparam=="ShowLog")
-        			console.log("listPassangersInElevator " + e);
-	       		for (var c = (counter)-20 ; (counter) > 25 && c <= (counter) ; c++ ) {       			
-	        		if (passingersInElevators[c][e]>0)
-	        			if (logparam=="ShowLog")
-							console.log("PassengersInElevator[" + c + "][" + e + "]=" + passingersInElevators[c][e] );
-	        	}
-        	}
+        var listPassangersWeightInElevator = function(elevatorNumber, msg, logparam) {      
+            var prevEntries = 0;
+            for (var e = 0 ; logparam == "ShowEverything" && e < NumberOfElevators ; e++) {
+                    console.log("listPassangersWeightInElevator " + e);
+                for (var c = (counter)-20 ; (counter) > 25 && c <= (counter) ; c++ ) {                  
+                    if (passingersWeightInElevators[c][e]>0) {                        
+                        console.log("PassengersInElevator[" + c + "][" + e + "]=" + passingersWeightInElevators[c][e].toFixed(2) );  
+                        if (prevEntries++ > 2)
+                            break;                            
+                    }                    
+                }
+            }
+            var prevLoad = 0;
+            var currLoad = 0;
+            for (var c = counter ; c>0 ; c-- ) {                      
+                if(currLoad==0 && passingersWeightInElevators[c][elevatorNumber]>0){
+                    currLoad = passingersWeightInElevators[c][elevatorNumber];
+                    continue;
+                }
+                if (prevLoad==0 && passingersWeightInElevators[c][elevatorNumber]>0 && currLoad!=0) {
+                    prevLoad = passingersWeightInElevators[c][elevatorNumber];                
+                    break;
+                }
+            }
+            if (logparam=="ShowLog" || logparam=="ShowEverything")
+                console.log("Elevator " + elevatorNumber + " getIn/getOff " + (currLoad-prevLoad).toFixed(2) + "  prevLoad:" + prevLoad.toFixed(2) + " currLoad:" + currLoad.toFixed(2) + " " + msg);
+            // Az utolsó 5-20 értékből a legkisebbet vagy a legnagyobbat kell kiválasztani, mert egyszerre sokan nyomják meg a gombot.
+            // de azt a hívó függvénynek kell kiválogatni az utolsó értékekböl, annyiból ahány emelet van.   return currLoad-prevLoad;
+            //console.log("avgWaitTime:" + avgWaitTime + "  maxWaitTime:" + maxWaitTime + " moveCount:" + moveCount + " transportedCounter:" + transportedCounter);
         }
   
         var removeDuplicates = function (originalArray, sort) {
@@ -118,7 +137,7 @@
             return ret;
         }                  
 
-        var updatePressedButtonsList = function (RemoveThisFloor, msg, logparam) {         
+        var updatePressedButtonsList = function (RemoveThisFloor, msg, logparam) {               
             var indexDown = DnButtonsPressed.indexOf(RemoveThisFloor);
             if (indexDown > -1) {
                 DnButtonsPressed.splice(indexDown, 1);
@@ -159,12 +178,12 @@
                 console.log("==========================================");
             for (var i=NumberOfFloors-1 ; i>=0 ; i--) {
                 if (logparam == "ShowLog" ) {
-                	if (i==NumberOfFloors-1)
-		                console.log("Waiting on Floor " + i + ".            DOWN: " + (timer-waitingFloorsDn[i]).toFixed() );                
-		            if (i==0)
-		            	console.log("Waiting on Floor " + i + ". \tUP: " + (timer-waitingFloorsUp[i]).toFixed());                
-		            else
-                    	console.log("Waiting on Floor " + i + ". \tUP: " + (timer-waitingFloorsUp[i]).toFixed() + "\tDOWN: " + (timer-waitingFloorsDn[i]).toFixed() );                                
+                    if (i==NumberOfFloors-1)
+                        console.log("Waiting on Floor " + i + ".            DOWN: " + (timer-waitingFloorsDn[i]).toFixed() );                
+                    if (i==0)
+                        console.log("Waiting on Floor " + i + ". \tUP: " + (timer-waitingFloorsUp[i]).toFixed());                
+                    else
+                        console.log("Waiting on Floor " + i + ". \tUP: " + (timer-waitingFloorsUp[i]).toFixed() + "\tDOWN: " + (timer-waitingFloorsDn[i]).toFixed() );                                
                 }
             }
             if (logparam == "ShowLog" )
@@ -177,8 +196,16 @@
                 console.log(" Elevator "  + elevatorNumber + " was Idle");            
         }     
         
-        var floorButtonPressedBehavior = function (elevator,  elevatorNumber, FloorBtnPressed, behavior, logparam) {
+        var listWaitingInsideElevator = function(e) {
+            for (var f=0 ; f<NumberOfFloors; f++) {
+                if (waitingInsideElevators[e][f] != -1)
+                    console.log("Passangers in Elevator " + e + " are waiting for Floor " + f + " for " + (timer-waitingInsideElevators[e][f]).toFixed() + "s")    
+            }
+        }
+
+        var floorButtonPressedBehavior = function (elevator, elevatorNumber, FloorBtnPressed, behavior, logparam) {            
             updatePressedButtonsList( elevator.currentFloor() , "floorButtonPressed"+FloorBtnPressed+" on Floor"+elevator.currentFloor(), "NO ShowLog" );                                
+            waitingInsideElevators[elevatorNumber][FloorBtnPressed] = timer;         
             switch (behavior) {
                 case "GroundFloor": // Földszintről megy felfelé azokra az emeletekre amiket megnyomtak, lefele nem visz senkit, csak akkor ha felért a legfelső hívott emeletre, mert aki fentről megy le úgyis a földszintre megy
                     elevator.destinationQueue = elevator.getPressedFloors();
@@ -204,19 +231,43 @@
                     elevator.checkDestinationQueue();     
                     updateIndicators(true,"TWOALL");     // Jó ez csak beszáll mindenki, az is akinek nemkéne                
                     break;
-                case "SortPlusGroundFloor":
+                case "UpDown":  // Az alsó és felső emelet között mozog minden lift, és megáll az olyan emeleteknél ahol hívták (és közel van ~1táv), meg ahova küldték
+                    if (elevator.currentFloor() == NumberOfFloors-1)
+                        elevator.goToFloor(0,true);
+                    if (elevator.currentFloor() == 0)
+                        elevator.goToFloor(NumberOfFloors-1,true);
+                    // elevator.destinationQueue.push(FloorBtnPressed);
+                    // elevator.destinationQueue = removeDuplicates(elevator.destinationQueue, "Sort");
+                    // elevator.checkDestinationQueue();
+                    // var PressedFloors = elevator.getPressedFloors();
+                    // elevator.destinationQueue = [];                
+                    // for (var i=0 ; i<NumberOfFloors ; i++)
+                    //     if (i == PressedFloors[i])
+                    //     elevator.destinationQueue.push(i); 
+                    // elevator.checkDestinationQueue();
                     break;
+                case "SortPlusGroundFloor":
+                    break;                    
                 default:   // "FirstComeFirstServe":  Oda megy ahova küldik
                     elevator.goToFloor(FloorBtnPressed);
-            } 
-            if (logparam == "ShowLog")
+            }
+            passingersWeightInElevators[counter][elevatorNumber] = elevator.loadFactor();
+            if (counter++ > arraySize-50)
+                counter=0;            
+            if (logparam == "ShowLog") 
                 console.log("FloorButtonPressed(" + behavior + "," + FloorBtnPressed + ")  Queue: " + elevator.destinationQueue + " Elevator " + elevatorNumber + " is at floor " + elevator.currentFloor());                      
+            listPassangersWeightInElevator(elevatorNumber, "FloorButtonPressed",  "ShowLog");
         }
         
-        var passingFloorBehavior  = function (elevator, elevatorNumber, passFloorNum, direction, logparam) { 
+        var passingFloorBehavior  = function (elevator, elevatorNumber, passFloorNum, direction, logparam) {    
+           // listWaitingInsideElevator(3);
             var PressedFloors = elevator.getPressedFloors();
             for (var i = 0 ; i < PressedFloors.length ; i++) {                
-                if (passFloorNum == PressedFloors[i]) {  // Ha olyan emelet mellett megy el a lift, ami megnyomott gomb akkor egyből odamegy
+                if (passFloorNum == PressedFloors[i]  &&  elevator.loadFactor() < 0.4) {  // Ha olyan emelet mellett megy el a lift, ami megnyomott gomb akkor egyből odamegy, Reorganize mellett nincs értelme
+                    var heading = elevator.destinationQueue[0];
+                    elevator.stop();
+                    elevator.destinationQueue.push(heading);
+                    elevator.checkDestinationQueue();
                     if (logparam == "ShowLog") 
                         console.log("Elevator " + elevatorNumber + " Passing Floor " + passFloorNum + ". Direction:" + direction + ". PressedFloors: " + PressedFloors + " \t Queue: " + elevator.destinationQueue);    
                 }
@@ -225,17 +276,23 @@
                        
         var stoppedAtFloorBehavior  = function (elevator, elevatorNumber, Floor, logparam) {
             updateIndicators(true, "TWO");  
-            updatePressedButtonsList( Floor , "stoppedAtFloor " + Floor, "ShowLog NOOOO" );
+            updatePressedButtonsList(Floor , "stoppedAtFloor " + Floor, "ShowLog NOOOO" );
+            if (waitingInsideElevators[elevatorNumber][Floor] != -1) {
+                if ("ShowLog")
+                    console.log("Passangers in elevator " + elevatorNumber + " delivered to floor " + Floor + " in " + waitingInsideElevators[elevatorNumber][Floor].toFixed(1) + "s");
+            }
+            waitingInsideElevators[elevatorNumber][Floor] = -1;
             waitingFloorsUp[Floor] = -1;  // Később majd csak akkor kell nullázni, ha arra ment a lift, és elis vitte a várakozókat
             waitingFloorsDn[Floor] = -1;
-            passingersInElevators[counter][elevatorNumber] = elevator.loadFactor();
-			counter++;
-            listPassangersInElevator("ShowLog");
+            passingersWeightInElevators[counter][elevatorNumber] = elevator.loadFactor();
+            if (counter++ > arraySize-50)
+                counter=0;
             if (logparam == "ShowLog")
-                console.log("Elevator " + elevatorNumber + " stopped at floor " + Floor + "\tloadFactor:" + elevator.loadFactor());
+                console.log("Elevator " + elevatorNumber + " stopped at floor " + Floor + "\tloadFactor:" + elevator.loadFactor().toFixed(2));
+            listPassangersWeightInElevator(elevatorNumber, "Elevator Stopped", "ShowLog");           
         }
 
-        var ButtonPressedOnFloor  = function (floor, UpOrDownBtn, maxLoad, sendImmediately, logparam) {     
+        var ButtonPressedOnFloor  = function (floor, UpOrDownBtn, maxLoad, sendImmediately, logparam) {              
             checkWaitingFloors(floor, UpOrDownBtn, "DO NOT ShowLog");
             var Dist = 99;
             var NearestElevator = -1;
@@ -281,16 +338,16 @@
 
         _.each(elevators, function(elevator,index) {
             elevator.on("idle", function() {
-                idleBehavior(elevator, "ShowLog");
+                idleBehavior(elevator, "NShowLog");
             });
             elevator.on("floor_button_pressed", function(floorNum) {
                 floorButtonPressedBehavior(elevator, index, floorNum, "Reorganize", "NOShowLog");
             });
             elevator.on("passing_floor", function(passFloorNum, direction) {
-                passingFloorBehavior(elevator, index, passFloorNum, direction, "NOShowLog");   
+                passingFloorBehavior(elevator, index, passFloorNum, direction, "NShowLog");   
             });
             elevator.on("stopped_at_floor", function(floorNum) {
-                stoppedAtFloorBehavior(elevator, index, floorNum, "ShowLog");     
+                stoppedAtFloorBehavior(elevator, index, floorNum, "NShowLog");     
             });            
         });              
 
@@ -319,7 +376,7 @@
         }
         timer = timer + dt;            
         var UseAllElevators = true;
-        for (var i = 0 ; !UseAllElevators && i<NumberOfElevators-1 ; i++) 
+        for (var i = 0 ; !UseAllElevators && i<elevators.length-1 ; i++) 
             elevators[i].stop();
     }
 }
