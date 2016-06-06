@@ -13,3 +13,11 @@
         Ha pl 5.en nyomják meg, és a Lift a 2.-on van, 4.re és 6.ra megy, akkor a DQ legyen 4,5,6 !
 
 - az updateben removeduplicates, és updnindicator ha van értelme
+
+- passing floor: ha olyan emelet mellett megy el a lift ahol hivtak a liftet, akkor dq insert at
+
+- az ures lifteket azonnal kuldeni kell a hivo emeletekre
+
+- log flush interval
+
+
