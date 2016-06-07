@@ -1,5 +1,5 @@
-# Aurel's ElevatorSaga Solution
+**Aurel's ElevatorSaga Solution**
 
-Transported/s 1.48
-Avg waiting time 17.3s
-Max waiting time 132.0s
+Transported/s 1.50
+Avg waiting time 18.3s
+Max waiting time 162.7s
