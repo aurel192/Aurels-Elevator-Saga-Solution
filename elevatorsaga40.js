@@ -2,7 +2,7 @@
 {
     init: function(elevators, floors) {
         shown = 0;
-        interval = 3;        
+        interval = 3000;        
         timer = 0;
         counter = 0;          
         for (var f=0 ; f<floors.length ; f++) {
@@ -56,7 +56,7 @@
 
         removeDuplicates = function (originalArray, sort) {
             var result = [];
-            $.each(originalArray, function(i, e) {
+            $.each(originalArray, function(i, e) { //  queue = _.uniq(queue);
                 if ($.inArray(e, result) == -1) result.push(e);
             });
             if (sort == "Sort") {
@@ -64,7 +64,7 @@
                     return a - b;
                 });     
             }                   
-            return result; //  queue = _.uniq(queue);
+            return result; 
         }
 
         indexOfMax = function(arr) {
@@ -158,7 +158,7 @@
         rearrangeByWaitingTime = function (elevatorNumber, visit, logparam) {                      
             var dq = elevators[elevatorNumber].destinationQueue;
             dq.push(visit);
-            dq = removeDuplicates(dq, "Sort");            
+            dq = removeDuplicates(dq, "Sort");       
             var w = new Array(dq.length);
             for (var i = 0 ; i < dq.length ; i++) {
                 w[i] = elevators[elevatorNumber].waitingInside[ dq[i] ];
@@ -312,7 +312,19 @@
         }
 
          // Elevator 0 Passing Floor 10. Direction:down Freespace: 8.00 Queue: 10,0,4
-        passingFloor = function (elevator, passFloorNum, minFreeSpace, direction, logparam) {                    
+        passingFloor = function (elevator, passFloorNum, minFreeSpace, direction, logparam) {    
+            var pf = elevator.getPressedFloors();            
+            var dq = elevator.destinationQueue;
+            if (pf.includes(passFloorNum)) { // Ha PF-ban van
+                elevator.goToFloor(passFloorNum,true);
+                console.log("elevator " + elevator.index + " passing floor" + passFloorNum);
+            }
+            // if (elevator.destinationQueue.includes(passFloorNum)){ // Ha DQ-ban van
+            //     elevator.destinationQueue.splice(0, 0, passFloorNum);
+            //     elevator.destinationQueue = removeDuplicates(elevator.destinationQueue, "NoSort");
+            //     elevator.checkDestinationQueue();
+            //     console.log("elevator " + elevator.index + " passing floor" + passFloorNum);
+            // }
             if ( floors[passFloorNum].waitingUp && ( ((1-elevator.loadFactor())*elevator.maxPassengerCount()) >= minFreeSpace ) && direction=="up" ) {
                     elevator.destinationQueue.splice(0, 0, passFloorNum);
                     elevator.destinationQueue = removeDuplicates(elevator.destinationQueue, "NoSort");
@@ -328,7 +340,7 @@
                     floors[passFloorNum].waitingDn = 0;     
                     if (logparam == "ShowLog") 
                         console.log("Elevator " + elevator.index + " Passing Floor " + passFloorNum + ". Direction:" + direction + " Freespace: " + ((1-elevator.loadFactor())*elevator.maxPassengerCount()).toFixed(2) +  " Queue: " + elevator.destinationQueue);    
-            }                   
+            }                               
         }
                        
         stoppedAtFloor = function (elevator, Floor, logparam) {
@@ -377,13 +389,13 @@
         }    
 
         ButtonPressedOnFloor  = function (floor, UpOrDownBtn, minFreeSpace, sendImmediately, logparam) {   
-            // maxWaitTime = 999;
-            // if ( ((timer-floors[floor].waitingUp)>maxWaitTime) || ((timer-floors[floor].waitingDn)>maxWaitTime) )     
-            //     SendLeastLoadedElevatorToFloor(floor, UpOrDownBtn, minFreeSpace, true, "ShowLog"); 
-            // else
+            maxWaitTime = 999;
+            if ( ((timer-floors[floor].waitingUp)>maxWaitTime) || ((timer-floors[floor].waitingDn)>maxWaitTime) )     
+                 SendLeastLoadedElevatorToFloor(floor, UpOrDownBtn, minFreeSpace, true, "ShowLog"); 
+            else
                 SendLeastLoadedElevatorToFloor(floor, UpOrDownBtn, minFreeSpace, false, logparam); 
             addWaitingFloor(floor, UpOrDownBtn, "NoLog");                   
-        }  
+        }
 
         _.each(elevators, function(elevator,index) {
             elevator.index = index;
