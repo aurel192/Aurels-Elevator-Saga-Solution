@@ -21,6 +21,7 @@
 - [ ]  az ures lifteket azonnal kuldeni kell a hivo emeletekre
 
 - [ ] log flush interval
+- [ ] ha passing floor benne van a PF-ban, és oda küldöm akkor, azt kikéne venni a DQ-ból, vagy hátra tenni
 
 
 
