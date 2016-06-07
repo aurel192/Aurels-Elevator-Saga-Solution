@@ -1,7 +1,7 @@
 
 {
     init: function(elevators, floors) {
-        interval = 10;        
+        interval = 3;        
         shown = 0;
         timer = 0;
         counter = 0;        
@@ -9,10 +9,16 @@
         longestWaitingFloorUp = 0;
         longestWaitingFloorDn = 0;   
         arraySize = 1000;     
-        waitingFloorsUp = [];
-        waitingFloorsDn = [];      
         maxWaitingInElevator = 0;
         maxWaitingForElevator = 0;
+        waitingFloorsUp = [];
+        waitingFloorsDn = [];      
+        waitingFloorsUpCntr = [];      
+        waitingFloorsDnCntr = [];      
+        for (var f=0 ; f<floors.length ; f++) {
+            waitingFloorsUpCntr[f] = 0;
+            waitingFloorsDnCntr[f] = 0;
+        }
 
         Array2D = function(numrows, numcols, initial){
            var arr = [];
@@ -27,6 +33,8 @@
         }
         passengersWeightInElevators = Array2D(arraySize,elevators.length,0); // [counter][elevators.length] = PassengersInElevator       
         waitingInsideElevators = Array2D(elevators.length,floors.length,-1); // waitingInsideElevators[2][11] == 20;  A harmadik liftben 11. emeletre 20mp-e várnak
+
+        var isFull = function(elevator) { return elevator.loadFactor() >= 0.7; };
 
         updateIndicators = function (enabled, dir, e) {
             for (var i = 0 ; i<elevators.length && enabled ; i++) {
@@ -102,7 +110,7 @@
                     return a - b;
                 });     
             }                   
-            return result;
+            return result; //  queue = _.uniq(queue);
         }
 
         indexOfMax = function(arr) {
@@ -121,10 +129,14 @@
         }
         
         addWaitingFloor = function (calledFromFloor, UpOrDownBtn, logparam) {
-            if (UpOrDownBtn == "up_button_pressed")
+            if (UpOrDownBtn == "up_button_pressed"){
                 waitingFloorsUp[calledFromFloor] = timer;
-            if (UpOrDownBtn == "down_button_pressed")
+                waitingFloorsUpCntr[calledFromFloor]++;
+            }
+            if (UpOrDownBtn == "down_button_pressed"){
                 waitingFloorsDn[calledFromFloor] = timer; 
+                waitingFloorsDnCntr[calledFromFloor]++;
+            }
             longestWaitingFloorUp = indexOfMax(waitingFloorsUp);
             longestWaitingFloorDn = indexOfMax(waitingFloorsDn);
             var msg = "";
@@ -156,13 +168,14 @@
                     strMsg += ((timer-waitingInsideElevators[e][f]).toFixed()).toString() + "\t\t";
                 }
                 if (waitingFloorsUp[f]) {
-                    strMsg += (timer-waitingFloorsUp[f]).toFixed() + "\t\t"
+                    strMsg += (timer-waitingFloorsUp[f]).toFixed() + "s\t"; 
                 }
                 else
-                    strMsg += "\t\t";
+                    strMsg += "\t";
+                strMsg += waitingFloorsUpCntr[f].toFixed() + " " + waitingFloorsDnCntr[f].toFixed() + " ";
                 if (waitingFloorsDn[f]){
-                    strMsg += (timer-waitingFloorsDn[f]).toFixed();
-                }
+                    strMsg += (timer-waitingFloorsDn[f]).toFixed() + "s\t";  
+                }                
                 console.log(strMsg,'background: #fff; color: #04e');
             }
         }
@@ -359,7 +372,7 @@
                 console.log("FloorButtonPressed(" + behavior + "," + FloorBtnPressed + ")  Queue: " + elevator.destinationQueue + " Elevator " + elevator.index + " is at floor " + elevator.currentFloor());                      
             listPassengersWeightInElevator(elevator.index, "FloorButtonPressed",  "NoLog");
         }
-        
+         // Elevator 0 Passing Floor 10. Direction:down Freespace: 8.00 Queue: 10,0,4
         passingFloor = function (elevator, passFloorNum, minFreeSpace, direction, logparam) {                    
             if ( waitingFloorsUp[passFloorNum] && ( ((1-elevator.loadFactor())*elevator.maxPassengerCount()) >= minFreeSpace ) && direction=="up" ) {
                     elevator.destinationQueue.splice(0, 0, passFloorNum);
@@ -442,16 +455,16 @@
         _.each(elevators, function(elevator,index) {
             elevator.index = index;
             elevator.on("idle", function() {
-                idle(elevator, "ShowLog");
+                idle(elevator, "NoLog");
             });
             elevator.on("floor_button_pressed", function(floorNum) {
-                floorButtonPressed(elevator, floorNum, "rearrangeDestinationQueue", "ShowLog");
+                floorButtonPressed(elevator, floorNum, "rearrangeDestinationQueue", "NoLog");
             });
             elevator.on("passing_floor", function(passFloorNum, direction) {
-                passingFloor(elevator, passFloorNum, 5, direction, "ShowLog");    
+                passingFloor(elevator, passFloorNum, 5, direction, "NoLog");    
             });
             elevator.on("stopped_at_floor", function(floorNum) {
-                stoppedAtFloor(elevator, floorNum, "ShowLog");     
+                stoppedAtFloor(elevator, floorNum, "NoLog");     
             });           
         });              
 
