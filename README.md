@@ -4,9 +4,6 @@
 * Avg waiting time 13.4s
 * Max waiting time 65.3s
 
-fail success
-challenge 17 1 9
-
 Level   Win/Loss ratio | Success | Fail
 ------------ | ------------- | ------------
 Challange 1 | 10 | 0
@@ -18,15 +15,15 @@ Challange 6 | 1 | 9
 Challange 7 | 2 | 8
 Challange 8 | 10 | 0
 Challange 9 | 2 | 8
-Challange 10 |  | 
-Challange 11 |  | 
-Challange 12 |  | 
-Challange 13 |  | 
-Challange 14 |  | 
-Challange 15 |  | 
-Challange 16 |  | 
+Challange 10 | 8 | 2
+Challange 11 | 1 | 9
+Challange 12 | 0 | 10
+Challange 13 | 0 | 10
+Challange 14 | 0 | 10
+Challange 15 | 0 | 10 
+Challange 16 | 10 | 0
 Challange 17 | 9 | 1
-Challange 18 |  | 
+Challange 18 | 0 | 10
 
 ##### List Of Functions:
   * updateIndicators
