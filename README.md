@@ -3,6 +3,7 @@
 ##### This solution was made for Epam's challange hosted on [elevate-me.hu](http://www.elevate-me.hu). 
 On [elevate-me.hu](http://www.elevate-me.hu) the challange is to transport as many people in ten minutes as possible.
 The current working version of my solution is able to transfer up to 1641 people in 600s. The lowest result is 1564.
+Therefore optimization needed to be successful on levels where the waiting time is limited.
 
 Tested on the [Perpetual Demo](http://play.elevatorsaga.com/#challenge=19)
 stats:
@@ -40,6 +41,8 @@ Challange 18 | 0 | 10
   * indexOfMax
   * addWaitingFloor
   * showTimers
+  * visitFloorWithPriority
+  * visitFloor
   * rearrangeDestinationQueue
   * rearrangeByWaitingTime
   * rearrangeByClosestFloors
