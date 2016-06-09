@@ -16,7 +16,7 @@
 - [x] az updateben removeduplicates, és updnindicator ha van értelme. Invalid
 
 - [x] passing floor: ha olyan emelet mellett megy el a lift ahol hivtak a liftet, akkor dq insert at
-   - [ ] legoptimálisabb paraméter meghatározása (trial n error)
+   - [x] legoptimálisabb paraméter meghatározása (trial n error) PF6 SLL D4F U5F
 
 - [ ]  az ures lifteket azonnal kuldeni kell a hivo emeletekre
 
