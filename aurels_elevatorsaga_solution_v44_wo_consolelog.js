@@ -1,5 +1,6 @@
 
-{    // best settings: PF6 SLL D4F U5F
+{     // https://github.com/aurel192/Aurels-Elevator-Saga-Solution
+// best settings: PF6 SLL D4F U5F
 // Transported/s 1.50
 // Avg waiting time 13.4s
 // Max waiting time 65.3s
@@ -146,11 +147,11 @@
                     Dist = Math.abs(elevators[LeastLoadedElevator].currentFloor() - floor);               // FREE SPACE IS (1-LOADFACTOR)*MAXPASSENGERSCOUNT
                 }
             }
-            if (LeastLoadedElevator != -1 && LeastLoadedElevatorsFreeSpace>=minFreeSpace) {              // IF THERE IS AN ELEVATOR WITH ENOUGH SPACE THAT SOULD BE SENT TO THE FLOOR   
-                if (sendImmediately)                                                                     // WHEN THIS FUNCTION IS CALLED WITH SENDIMMEDIATELY=TRUE PARAMETER 
-                    visitFloorWithPriority(elevators[LeastLoadedElevator], floor)                        // THE ELEVATOR WILL GO INSTANTLY TO THAT FLOOR, TO ENSURE THE FREE SPACE
-                else                                                                                     // ALTHOUGH TESTS PROVE THAT IT IS NOT EFFICIENT, 
-                    visitFloor(elevators[LeastLoadedElevator], floor);                                   // SO I JUST ENQUEUE THE FLOOR
+            if (LeastLoadedElevator != -1 && LeastLoadedElevatorsFreeSpace>=minFreeSpace) {               // IF THERE IS AN ELEVATOR WITH ENOUGH SPACE THAT SOULD BE SENT TO THE FLOOR   
+                if (sendImmediately)                                                                      // WHEN THIS FUNCTION IS CALLED WITH SENDIMMEDIATELY=TRUE PARAMETER 
+                    visitFloorWithPriority(elevators[LeastLoadedElevator], floor)                         // THE ELEVATOR WILL GO INSTANTLY TO THAT FLOOR, TO ENSURE THE FREE SPACE
+                else                                                                                      // ALTHOUGH TESTS PROVE THAT IT IS NOT EFFICIENT, 
+                    visitFloor(elevators[LeastLoadedElevator], floor);                                    // SO I JUST ENQUEUE THE FLOOR
             }
         }
 
@@ -161,7 +162,7 @@
                 sendLeastLoadedElevatorToFloor(floor, UpOrDownBtn, minFreeSpace, true);                      // THE LEAST LOADED ELEVATOR IS GOING TO PICK THE PASSENGERS UP IMMEDIATELY (NOT EFFICIENT)
             else                                                                                             //       ELSE (IF IT IS NOT THAT URGENT),
                 sendLeastLoadedElevatorToFloor(floor, UpOrDownBtn, minFreeSpace, false);                     // THE LEAST LOADED ELEVATOR IS GOING TO PICK THE PASSENGERS UP. (FREE SPACE IS NOT ENSURED ON ARRIVAL)
-            addWaitingFloor(floor, UpOrDownBtn);
+            addWaitingFloor(floor, UpOrDownBtn);                                                             // ASSIGN TIMERS VALUE TO FLOOR'S WAITINGUP/WAITINGDN PROPERTY
         }
 
         showTimers = function() {                          // PRESS F12, AND SEE WAITING TIMES IN CONSOLE LOG
