@@ -5,6 +5,9 @@ On [elevate-me.hu](http://www.elevate-me.hu) the challange is to transport as ma
 The current working version of my solution is able to transfer up to 1641 people in 600s. The lowest result is 1564.
 Therefore optimization needed to be successful on levels where the waiting time is limited.
 
+![elevate-me.hu](https://github.com/aurel192/Aurels-Elevator-Saga-Solution/blob/master/elevateme.jpg)
+
+
 Tested on the [Perpetual Demo](http://play.elevatorsaga.com/#challenge=19)
 stats:
 * Transported/s 1.50
