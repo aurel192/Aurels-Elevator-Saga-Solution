@@ -7,11 +7,9 @@ Therefore optimization needed to be successful on levels where the waiting time 
 
 ![elevate-me.hu](https://github.com/aurel192/Aurels-Elevator-Saga-Solution/blob/master/colortimer.png)
 
-pBpW-GKweJc
-
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=pBpW-GKweJc
 " target="_blank"><img src="http://img.youtube.com/vi/pBpW-GKweJc/0.jpg" 
-alt="Elevate Me - Aurels Elevator Saga Soultion" width="640" height="480" border="5" /></a>
+alt="Elevate Me - Aurels Elevator Saga Soultion" width="320" height="240" border="5" /></a>
 
 Tested on the [Perpetual Demo](http://play.elevatorsaga.com/#challenge=19)
 stats:
